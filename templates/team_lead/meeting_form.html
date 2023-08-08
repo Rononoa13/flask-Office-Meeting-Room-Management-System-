@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block title %} Meeting Room {% endblock %}
+
+
+{% block content %}
+
+<img id="banner" src="{{url_for('static', filename='/images/meeting-doodle.avif')}}" alt="">
+
+<div class="meeting-form-container" align="center">
+    <br>
+    <h3>Choose a room and time for your meeting:</h3>
+    <br>
+    <form action="" method="post">
+        <div class="dropdown" align="center">
+            <div style="width: 200px;">
+                <select id="dropdown" class="form-select" name="selected_option" required>
+                    <option value="" disabled selected>Select a room</option>
+                    <option value="Meeting Room 1">Meeting Room 1</option>
+                    <option value="Discussion Room 1">Discussion Room 1</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+        </div>
+        <br>
+        <div class="timeslot">
+            <div class="form-group">
+                <!-- Start -->
+                <label for="start_time" class="form-label"><b>Start Time:</b></label>
+                <input type="time" id="start_time" name="start_time" class="form-control" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <!-- End -->
+                <label for="end_time" class="form-label"><b>End Time:</b></label>
+                <input type="time" id="end_time" name="end_time" class="form-control">
+            </div>
+
+        </div>
+        <!--  -->
+        <br>
+
+        <div class="mb-2">
+            <!-- <label for="">Cover Letter:</label><br> -->
+            <textarea name="cover_letter" id="" cols="75" rows="3"
+                placeholder="Say something important for the meeting."></textarea>
+        </div>
+
+        <input class="btn btn-primary" type="submit" id="set_time" value="Set Meeting">
+
+    </form>
+</div>
+<br>
+<hr style="width: 900px; margin: 0 auto;">
+
+<div class="meeting-table-availablity-container" align="center">
+    <table>
+        <thead>
+            <tr>
+                <th>Room</th>
+                <th>Availability</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- TODO: Loop through the database entries to display them in this table -->
+            <!-- Rows inside table -->
+            {% for time in times %}
+            <tr>
+                <td> <a href="#" style="text-decoration: none;">{{ time.room_name }}</a></td>
+                {% if time.availability %}
+                <td class="available" style="color: green;">Available</td>
+                {% else %}
+                <td class="occupied" style="color: red;">Occupied</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock%}
+
+
+</html>
