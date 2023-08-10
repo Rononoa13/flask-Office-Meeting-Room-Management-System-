@@ -1,8 +1,8 @@
 import datetime
 from flask import Flask, render_template, request, redirect
-from models import db, SetMeeting, User
+from models import db, SetMeeting, User, UserRole, ModelView, UserView
 from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
+# from flask_admin.contrib.sqla import ModelView
 
 
 app = Flask(__name__)
@@ -37,6 +37,7 @@ def set_meeting():
         return render_template("team_lead/meeting_form.html", times=times)
 
 admin.add_view(ModelView(User, db.session))
+admin.add_view(UserView(UserRole, db.session))
 
 if __name__ == "__main__":
     with app.app_context():
