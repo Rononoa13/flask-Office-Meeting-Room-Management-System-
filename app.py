@@ -1,7 +1,8 @@
-import datetime
+from datetime import datetime, timedelta, date
 from flask import Flask, render_template, request, redirect
 from models import db, SetMeeting, User, UserRole, ModelView, UserView
 from flask_admin import Admin
+from flask_migrate import Migrate
 # from flask_admin.contrib.sqla import ModelView
 
 
@@ -11,6 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///meetings.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 
 db.init_app(app)
+migrate = Migrate(app, db)
 admin = Admin(template_mode='bootstrap4')
 
 
