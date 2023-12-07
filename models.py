@@ -27,3 +27,4 @@ class SetMeeting(db.Model):
     start_time = db.Column(db.Integer, nullable=False)
     end_time = db.Column(db.Integer, nullable=False)
     availability = db.Column(db.Boolean, default=True)
+    owner = db.Column(db.Integer)
