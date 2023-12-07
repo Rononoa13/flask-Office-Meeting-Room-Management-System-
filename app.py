@@ -36,6 +36,38 @@ def set_meeting():
         times = SetMeeting.query.all()
         return render_template("team_lead/meeting_form.html", times=times)
 
+#  Create function to get start time and end time:
+def human_readable_format_time(start_time_dt, end_time_dt,room_dt):
+    date_only = start_time_dt.date()
+
+    start_time = start_time_dt.strftime('%I:%M %p')
+    end_time = end_time_dt.strftime('%I:%M %p')
+
+    room_name = room_dt
+
+    formatted_date = date_only.strftime('%B %d, %Y')
+
+    return formatted_date, start_time, end_time, room_name
+# 
+@app.route('/view-meeting-details', methods=['GET', 'POST'])
+def view_meeting_details():
+    owners = db.session.query(SetMeeting.owner).all()
+    ids = db.session.query(SetMeeting.id).all()
+    meeting_times = db.session.query(SetMeeting.start_time, SetMeeting.end_time, SetMeeting.room_name)
+    formatted_meeting_times = [] # to store out of for loop
+
+    for start_time, end_time, room_name in meeting_times:
+        formatted_date, start_time, end_time, room_name = human_readable_format_time(start_time, end_time, room_name)
+        formatted_meeting_times.append({
+            'formatted_date': formatted_date,
+            'start_time': start_time,
+            'end_time': end_time,
+            'room_name': room_name
+        })
+
+    return render_template('team_lead/meeting_room_details.html', times=formatted_meeting_times, ids=ids, owners=owners)
+
+
 admin.add_view(ModelView(User, db.session))
 admin.add_view(UserView(UserRole, db.session))
 
