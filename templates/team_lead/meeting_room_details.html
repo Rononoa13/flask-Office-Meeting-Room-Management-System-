@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+<br>
+<div class="room-details-container" style="max-width: 100rem;">
+    <div class="row">
+        <div class="col-md-5" align="center" >
+            
+            <br>
+            <p><b>"Rest assured, we've got you covered."</b></p>
+            <ul class="pretty-list">
+                <li>TV</li>
+                <li>Projector</li>
+                <li>AC</li>
+            </ul>
+        </div>
+        <div class="d-none d-md-block col-md-7" align="center">
+            <img id="side" src="{{url_for('static', filename='/images/side-meeting.png')}}" alt="">
+        </div>
+    </div>
+</div>
+<br>
+
+
+
+<section class="container">
+    <div class="row">
+        <div class="time-details" align="center">
+            <h2>Meeting Time</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Meeting Room</th>
+                    </tr>
+                </thead>
+                    {% for id in ids %}
+                    {% set time = times[loop.index0] %}
+                    <tr>
+                        <td>{{ time.formatted_date }}</td>
+                        <td>{{ time.start_time }}</td>
+                        <td>{{ time.end_time }}</td>
+                        <td>{{ time.room_name }}</td>
+                        <td>
+                            {% set owner = owners[loop.index0] %}
+                            
+                            <!-- This code snippets will run if only Javascript is enabled or else it wont run. -->
+                            {% if owner[0] == current_user.id %}
+                                <a class="btn btn-danger btn-sm" href="/delete/{{ id[0] }}" onclick="return confirm('Are you sure you want to cancel the meeting?')">Cancel</a>
+                            {% else %}
+                                <span class="btn btn-danger btn-sm disabled">Cancel</span>
+                            {% endif %}
+                            
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
+                
+            </table>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
