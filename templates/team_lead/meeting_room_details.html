@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "common_templates/layout.html" %}
 
 
 {% block content %}
@@ -34,9 +34,9 @@
                         <th>Date</th>
                         <th>Start Time</th>
                         <th>End Time</th>
-                        <th>Meeting Room</th>
                     </tr>
                 </thead>
+                {#% 
                     {% for id in ids %}
                     {% set time = times[loop.index0] %}
                     <tr>
@@ -58,6 +58,18 @@
                         </td>
                     </tr>
                     {% endfor %}
+                %#}
+                {% for time in times %}
+                <tr>
+                    <td></td>
+                    <td> {{time.start_time}}</td>
+                    <td> {{time.end_time}}</td>
+                    <td>
+                        <a class="btn btn-danger btn-sm" href="/delete/{{time.id}}" onclick="return confirm('Are you sure you want to cancel the meeting?')">Cancel</a>
+                    </td>
+                </tr>
+
+                {% endfor %}
                 
             </table>
         </div>

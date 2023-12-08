@@ -27,13 +27,13 @@
             <div class="form-group">
                 <!-- Start -->
                 <label for="start_time" class="form-label"><b>Start Time:</b></label>
-                <input type="datetime-local" id="start_time" name="start_time" class="form-control" class="form-control">
+                <input type="time" id="start_time" name="start_time" class="form-control" class="form-control">
             </div>
 
             <div class="form-group">
                 <!-- End -->
                 <label for="end_time" class="form-label"><b>End Time:</b></label>
-                <input type="datetime-local" id="end_time" name="end_time" class="form-control">
+                <input type="time" id="end_time" name="end_time" class="form-control">
             </div>
 
         </div>
@@ -66,7 +66,7 @@
             <!-- Rows inside table -->
             {% for time in times %}
             <tr>
-                <td> <a href="#" style="text-decoration: none;">{{ time.room_name }}</a></td>
+                <td> <a href="{{ url_for('view_meeting_details') }}" style="text-decoration: none;">{{ time.room_name }}</a></td>
                 {% if time.availability %}
                 <td class="available" style="color: green;">Available</td>
                 {% else %}
