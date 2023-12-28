@@ -59,11 +59,11 @@
                     </tr>
                     {% endfor %}
                 %#}
-                {% for time in times %}
+                {% for time in filtered_date_time %}
                 <tr>
-                    <td> {{formatted_date}} </td>
-                    <td> {{formatted_start_time}}</td>
-                    <td> {{formatted_end_time}}</td>
+                    <td> {{time[0]}} </td>
+                    <td> {{time[1]}}</td>
+                    <td> {{time[2]}}</td>
                     <td>
                         <a class="btn btn-danger btn-sm" href="/delete/{{time.id}}" onclick="return confirm('Are you sure you want to cancel the meeting?')">Cancel</a>
                     </td>

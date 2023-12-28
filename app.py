@@ -62,7 +62,8 @@ def view_meeting_details():
     meeting_times = SetMeeting.query.all()
     print(f"meeting times -> {meeting_times}")
 
-    filtered_times = []
+    filtered_date_time = []
+
     for time in meeting_times:
         # Convert string to datetime object
         start_time_string = time.start_time
@@ -88,10 +89,10 @@ def view_meeting_details():
         print(parsed_start_datetime)
         print(f"parsed end datetime {parsed_end_datetime}")
         # print(parsed_end_datetime)
+        filtered_date_time.append((formatted_date, formatted_start_time, formatted_end_time))
+        print(filtered_date_time)
 
-    
-
-    return render_template('team_lead/meeting_room_details.html', times=meeting_times, formatted_date=formatted_date, formatted_start_time=formatted_start_time, formatted_end_time=formatted_end_time)
+    return render_template('team_lead/meeting_room_details.html', filtered_date_time=filtered_date_time)
 
 # @app.route('/view-meeting-details/<string:room_name>', methods=['GET', 'POST'])
 # def view_meeting_detail(selected_room_name):
