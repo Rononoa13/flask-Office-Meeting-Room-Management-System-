@@ -16,6 +16,10 @@ migrate = Migrate(app, db)
 admin = Admin(template_mode='bootstrap4')
 
 
+@app.route("/")
+def index():
+    return redirect('dashboard')
+
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
     return render_template("common_templates/dashboard.html")
@@ -36,6 +40,8 @@ def set_meeting():
         return redirect("/set-meeting")
     else:
         times = SetMeeting.query.all()
+        # distinct_room = db.session.query(SetMeeting.room_name).distinct().all()
+        # times = db.session.query(SetMeeting.room_name).distinct().all()
         return render_template("team_lead/meeting_form.html", times=times)
 
 #  Create function to get start time and end time:
@@ -50,13 +56,60 @@ def set_meeting():
 #     formatted_date = date_only.strftime('%B %d, %Y')
 
 #     return formatted_date, start_time, end_time, room_name
-# 
+
 @app.route('/view-meeting-details', methods=['GET', 'POST'])
 def view_meeting_details():
-    # ids = db.session.query(SetMeeting.id).all()
-    meeting_times = db.session.query(SetMeeting.id, SetMeeting.start_time, SetMeeting.end_time)
+    meeting_times = SetMeeting.query.all()
+    print(f"meeting times -> {meeting_times}")
 
-    return render_template('team_lead/meeting_room_details.html', times=meeting_times)
+    filtered_times = []
+    for time in meeting_times:
+        # Convert string to datetime object
+        start_time_string = time.start_time
+        end_time_string = time.end_time
+
+        print(f"start_time_string {start_time_string}")
+        print(f"end_time_string {end_time_string}")
+
+        date_format = "%Y-%m-%dT%H:%M"
+
+        parsed_start_datetime = datetime.strptime(start_time_string, date_format)
+        parsed_end_datetime = datetime.strptime(end_time_string, date_format)
+
+        # %b for abbreviated month name, %d for day, and %Y for the year. 
+        formatted_date = parsed_start_datetime.strftime("%b %d, %Y")
+        # %I for hours (12-hour clock), %M for minutes, and %p for AM/PM
+        formatted_start_time = parsed_start_datetime.strftime("%I:%M %p")
+        formatted_end_time = parsed_end_datetime.strftime("%I:%M %p")
+
+        print(f"formatted date {formatted_date}")
+        print(f"formatted start time {formatted_start_time}")
+
+        print(parsed_start_datetime)
+        print(f"parsed end datetime {parsed_end_datetime}")
+        # print(parsed_end_datetime)
+
+    
+
+    return render_template('team_lead/meeting_room_details.html', times=meeting_times, formatted_date=formatted_date, formatted_start_time=formatted_start_time, formatted_end_time=formatted_end_time)
+
+# @app.route('/view-meeting-details/<string:room_name>', methods=['GET', 'POST'])
+# def view_meeting_detail(selected_room_name):
+#     if selected_room_name is None:
+#         return redirect('set_meeting')
+#     selected_room = db.session.query(SetMeeting.room_name).all()
+#     meeting_times = db.session.query(SetMeeting.id, SetMeeting.room_name, SetMeeting.start_time, SetMeeting.end_time).all()
+#     print(selected_room)
+#     filtered_times = [] 
+#     for time in meeting_times:
+#         # print(f"time => {time.room_name}")
+#         # print(f"meeting_time = {meeting_times}")
+#         # print(f"selected room = {selected_room}")
+#         if time.room_name == selected_room[1]:
+#             print(time.room_name)
+#             filtered_times.append(time)
+
+#     return render_template('team_lead/meeting_room_details.html', times=meeting_times)
 
 
 # Endpoint for deleting a time slot
