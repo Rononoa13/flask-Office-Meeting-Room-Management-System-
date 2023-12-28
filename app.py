@@ -39,26 +39,19 @@ def set_meeting():
         db.session.commit()
         return redirect("/set-meeting")
     else:
-        times = SetMeeting.query.all()
+        # times = SetMeeting.query.all()
         # distinct_room = db.session.query(SetMeeting.room_name).distinct().all()
         # times = db.session.query(SetMeeting.room_name).distinct().all()
+        times = set(db.session.query(SetMeeting.room_name).all())
+        # times = db.session.query(SetMeeting.room_name).all()
         return render_template("team_lead/meeting_form.html", times=times)
 
 #  Create function to get start time and end time:
-# def human_readable_format_time(start_time_dt, end_time_dt,room_dt):
-#     date_only = start_time_dt.date()
 
-#     start_time = start_time_dt.strftime('%I:%M %p')
-#     end_time = end_time_dt.strftime('%I:%M %p')
 
-#     room_name = room_dt
+@app.route('/view-meeting-details/<selected_room>', methods=['GET', 'POST'])
+def view_meeting_details(selected_room):
 
-#     formatted_date = date_only.strftime('%B %d, %Y')
-
-#     return formatted_date, start_time, end_time, room_name
-
-@app.route('/view-meeting-details', methods=['GET', 'POST'])
-def view_meeting_details():
     meeting_times = SetMeeting.query.all()
     print(f"meeting times -> {meeting_times}")
 
@@ -66,6 +59,8 @@ def view_meeting_details():
 
     for time in meeting_times:
         # Convert string to datetime object
+        room_name = time.room_name
+        print(f"room_name -> {room_name}")
         start_time_string = time.start_time
         end_time_string = time.end_time
 
@@ -89,10 +84,13 @@ def view_meeting_details():
         print(parsed_start_datetime)
         print(f"parsed end datetime {parsed_end_datetime}")
         # print(parsed_end_datetime)
-        filtered_date_time.append((formatted_date, formatted_start_time, formatted_end_time))
+        # filtered_date_time.append((formatted_date, formatted_start_time, formatted_end_time))
         print(filtered_date_time)
 
-    return render_template('team_lead/meeting_room_details.html', filtered_date_time=filtered_date_time)
+        if time.room_name == selected_room:
+            filtered_date_time.append((formatted_date, formatted_start_time, formatted_end_time))
+
+    return render_template('team_lead/meeting_room_details.html', filtered_date_time=filtered_date_time, selected_room=selected_room)
 
 # @app.route('/view-meeting-details/<string:room_name>', methods=['GET', 'POST'])
 # def view_meeting_detail(selected_room_name):
