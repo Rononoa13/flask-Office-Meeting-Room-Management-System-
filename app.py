@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, date
+from datetime import datetime
 from flask import Flask, render_template, request, redirect
 from models import db, SetMeeting, User, UserRole, ModelView, UserView
 from flask_admin import Admin
@@ -39,11 +39,7 @@ def set_meeting():
         db.session.commit()
         return redirect("/set-meeting")
     else:
-        # times = SetMeeting.query.all()
-        # distinct_room = db.session.query(SetMeeting.room_name).distinct().all()
-        # times = db.session.query(SetMeeting.room_name).distinct().all()
         times = set(db.session.query(SetMeeting.room_name).all())
-        # times = db.session.query(SetMeeting.room_name).all()
         return render_template("team_lead/meeting_form.html", times=times)
 
 #  Create function to get start time and end time:
@@ -54,18 +50,13 @@ def view_meeting_details(selected_room):
 
     meeting_times = SetMeeting.query.all()
     print(f"meeting times -> {meeting_times}")
-
+    
     filtered_date_time = []
-
     for time in meeting_times:
+        print(time.id)
         # Convert string to datetime object
-        room_name = time.room_name
-        print(f"room_name -> {room_name}")
         start_time_string = time.start_time
         end_time_string = time.end_time
-
-        print(f"start_time_string {start_time_string}")
-        print(f"end_time_string {end_time_string}")
 
         date_format = "%Y-%m-%dT%H:%M"
 
@@ -78,46 +69,25 @@ def view_meeting_details(selected_room):
         formatted_start_time = parsed_start_datetime.strftime("%I:%M %p")
         formatted_end_time = parsed_end_datetime.strftime("%I:%M %p")
 
-        print(f"formatted date {formatted_date}")
-        print(f"formatted start time {formatted_start_time}")
-
-        print(parsed_start_datetime)
-        print(f"parsed end datetime {parsed_end_datetime}")
-        # print(parsed_end_datetime)
-        # filtered_date_time.append((formatted_date, formatted_start_time, formatted_end_time))
-        print(filtered_date_time)
-
         if time.room_name == selected_room:
-            filtered_date_time.append((formatted_date, formatted_start_time, formatted_end_time))
+            filtered_date_time.append((time.id, formatted_date, formatted_start_time, formatted_end_time))
 
-    return render_template('team_lead/meeting_room_details.html', filtered_date_time=filtered_date_time, selected_room=selected_room)
-
-# @app.route('/view-meeting-details/<string:room_name>', methods=['GET', 'POST'])
-# def view_meeting_detail(selected_room_name):
-#     if selected_room_name is None:
-#         return redirect('set_meeting')
-#     selected_room = db.session.query(SetMeeting.room_name).all()
-#     meeting_times = db.session.query(SetMeeting.id, SetMeeting.room_name, SetMeeting.start_time, SetMeeting.end_time).all()
-#     print(selected_room)
-#     filtered_times = [] 
-#     for time in meeting_times:
-#         # print(f"time => {time.room_name}")
-#         # print(f"meeting_time = {meeting_times}")
-#         # print(f"selected room = {selected_room}")
-#         if time.room_name == selected_room[1]:
-#             print(time.room_name)
-#             filtered_times.append(time)
-
-#     return render_template('team_lead/meeting_room_details.html', times=meeting_times)
-
+    return render_template('team_lead/meeting_room_details.html', id=time.id, filtered_date_time=sorted(filtered_date_time, reverse=True), selected_room=selected_room)
 
 # Endpoint for deleting a time slot
 @app.route("/delete/<int:id>", methods=['GET', 'POST'])
 def delete(id):
     time = SetMeeting.query.get(id)
-    db.session.delete(time)
-    db.session.commit()
-    return redirect('/view-meeting-details')
+    
+    if time:
+        # Get the selected_room before deleting the record
+        selected_room = time.room_name
+
+        db.session.delete(time)
+        db.session.commit()
+        
+        # Redirect to the view-meeting-details page with the encoded selected room
+        return redirect(f'/view-meeting-details/{selected_room}')
 
 
 admin.add_view(ModelView(User, db.session))
