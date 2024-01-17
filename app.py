@@ -42,8 +42,6 @@ def set_meeting():
         times = set(db.session.query(SetMeeting.room_name).all())
         return render_template("team_lead/meeting_form.html", times=times)
 
-#  Create function to get start time and end time:
-
 
 @app.route('/view-meeting-details/<selected_room>', methods=['GET', 'POST'])
 def view_meeting_details(selected_room):
@@ -82,11 +80,9 @@ def delete(id):
     if time:
         # Get the selected_room before deleting the record
         selected_room = time.room_name
-
         db.session.delete(time)
         db.session.commit()
         
-        # Redirect to the view-meeting-details page with the encoded selected room
         return redirect(f'/view-meeting-details/{selected_room}')
 
 
